@@ -78,8 +78,6 @@ class oopDesc {
   inline markWord cas_set_mark(markWord new_mark, markWord old_mark);
   inline markWord cas_set_mark(markWord new_mark, markWord old_mark, atomic_memory_order order);
 
-  inline markWord resolve_mark() const;
-
   // Returns the prototype mark that should be used for this object.
   inline markWord prototype_mark() const;
 
@@ -92,6 +90,9 @@ class oopDesc {
   inline Klass* klass_or_null_acquire() const;
   // Get the raw value without any checks.
   inline Klass* klass_raw() const;
+
+  inline narrowKlass narrow_klass() const;
+  inline narrowKlass narrow_klass_acquire() const;
 
   void set_narrow_klass(narrowKlass nk) NOT_CDS_JAVA_HEAP_RETURN;
   inline void set_klass(Klass* k);

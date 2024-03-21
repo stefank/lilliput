@@ -2519,15 +2519,9 @@ void LIR_Assembler::emit_load_klass(LIR_OpLoadKlass* op) {
 
   if (UseCompressedClassPointers) {
     if (UseCompactObjectHeaders) {
-      // Check if we can take the (common) fast path, if obj is unlocked.
+      // Load the object header
       __ ldr(result, Address(obj, oopDesc::mark_offset_in_bytes()));
-      if (LockingMode != LM_PLACEHOLDER) {
-        __ tst(result, markWord::monitor_value);
-        __ br(Assembler::NE, *op->stub()->entry());
-        __ bind(*op->stub()->continuation());
-      }
-
-      // Shift to get proper narrow Klass*.
+      // Shift to get proper narrow Klass*
       __ lsr(result, result, markWord::klass_shift);
     } else {
       __ ldrw(result, Address (obj, oopDesc::klass_offset_in_bytes()));

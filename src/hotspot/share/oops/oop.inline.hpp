@@ -83,15 +83,6 @@ markWord oopDesc::cas_set_mark(markWord new_mark, markWord old_mark, atomic_memo
   return Atomic::cmpxchg(&_mark, old_mark, new_mark, order);
 }
 
-markWord oopDesc::resolve_mark() const {
-  assert(LockingMode != LM_LEGACY, "Not safe with legacy stack-locking");
-  markWord m = mark();
-  if (m.has_displaced_mark_helper()) {
-    m = m.displaced_mark_helper();
-  }
-  return m;
-}
-
 markWord oopDesc::prototype_mark() const {
   if (UseCompactObjectHeaders) {
     return klass()->prototype_header();
@@ -111,7 +102,7 @@ void oopDesc::init_mark() {
 Klass* oopDesc::klass() const {
 #ifdef _LP64
   if (UseCompactObjectHeaders) {
-    markWord m = resolve_mark();
+    markWord m = mark();
     return m.klass();
   } else if (UseCompressedClassPointers) {
     return CompressedKlassPointers::decode_not_null(_metadata._compressed_klass);
@@ -125,7 +116,7 @@ Klass* oopDesc::klass() const {
 Klass* oopDesc::klass_or_null() const {
 #ifdef _LP64
   if (UseCompactObjectHeaders) {
-    markWord m = resolve_mark();
+    markWord m = mark();
     return m.klass_or_null();
   } else if (UseCompressedClassPointers) {
     return CompressedKlassPointers::decode(_metadata._compressed_klass);
@@ -138,15 +129,9 @@ Klass* oopDesc::klass_or_null() const {
 
 Klass* oopDesc::klass_or_null_acquire() const {
 #ifdef _LP64
-  if (UseCompactObjectHeaders) {
-    markWord m = mark_acquire();
-    if (m.has_displaced_mark_helper()) {
-      m = m.displaced_mark_helper();
-    }
-    return m.klass_or_null();
-  } else if (UseCompressedClassPointers) {
-     narrowKlass nklass = Atomic::load_acquire(&_metadata._compressed_klass);
-     return CompressedKlassPointers::decode(nklass);
+  if (UseCompressedClassPointers) {
+    narrowKlass nklass = narrow_klass_acquire();
+    return CompressedKlassPointers::decode(nklass);
   } else
 #endif
   {
@@ -155,12 +140,32 @@ Klass* oopDesc::klass_or_null_acquire() const {
 }
 
 Klass* oopDesc::klass_raw() const {
-  if (UseCompactObjectHeaders) {
-    return klass();
-  } else if (UseCompressedClassPointers) {
-    return CompressedKlassPointers::decode_raw(_metadata._compressed_klass);
-  } else {
+#ifdef _LP64
+  if (UseCompressedClassPointers) {
+    narrowKlass nklass = narrow_klass();
+    return CompressedKlassPointers::decode_raw(nklass);
+  } else
+#endif
+  {
     return _metadata._klass;
+  }
+}
+
+narrowKlass oopDesc::narrow_klass() const {
+  assert(UseCompressedClassPointers, "Only used with compressed klasses");
+  if (UseCompactObjectHeaders) {
+    return mark().narrow_klass();
+  } else {
+    return _metadata._compressed_klass;
+  }
+}
+
+narrowKlass oopDesc::narrow_klass_acquire() const {
+  assert(UseCompressedClassPointers, "Only used with compressed klasses");
+  if (UseCompactObjectHeaders) {
+    return mark_acquire().narrow_klass();
+  } else {
+    return Atomic::load_acquire(&_metadata._compressed_klass);
   }
 }
 
