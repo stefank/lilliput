@@ -147,6 +147,16 @@
 #include OS_HEADER(vmStructs)
 #include OS_CPU_HEADER(vmStructs)
 
+// Used by VMStructs when CompactObjectHeaders are enabled.
+// Must match the relevant parts from the real oopDesc.
+class fakeOopDesc {
+private:
+  union _metadata {
+    Klass*      _klass;
+    narrowKlass _compressed_klass;
+  } _metadata;
+};
+
 // Note: the cross-product of (c1, c2, product, nonproduct, ...),
 // (nonstatic, static), and (unchecked, checked) has not been taken.
 // Only the macros currently needed have been defined.
@@ -1155,6 +1165,8 @@
     declare_type(arrayOopDesc, oopDesc)                                   \
       declare_type(objArrayOopDesc, arrayOopDesc)                         \
     declare_type(instanceOopDesc, oopDesc)                                \
+                                                                          \
+  declare_toplevel_type(fakeOopDesc)                                      \
                                                                           \
   /**************************************************/                    \
   /* MetadataOopDesc hierarchy (NOTE: some missing) */                    \
@@ -2510,10 +2522,13 @@
   declare_constant(markWord::lock_bits)                                   \
   declare_constant(markWord::max_hash_bits)                               \
   declare_constant(markWord::hash_bits)                                   \
+  declare_constant(markWord::hash_bits_compact)                           \
                                                                           \
   declare_constant(markWord::lock_shift)                                  \
   declare_constant(markWord::age_shift)                                   \
   declare_constant(markWord::hash_shift)                                  \
+  declare_constant(markWord::hash_shift_compact)                          \
+  LP64_ONLY(declare_constant(markWord::klass_shift))                      \
                                                                           \
   declare_constant(markWord::lock_mask)                                   \
   declare_constant(markWord::lock_mask_in_place)                          \
@@ -2521,6 +2536,8 @@
   declare_constant(markWord::age_mask_in_place)                           \
   declare_constant(markWord::hash_mask)                                   \
   declare_constant(markWord::hash_mask_in_place)                          \
+  declare_constant(markWord::hash_mask_compact)                           \
+  declare_constant(markWord::hash_mask_compact_in_place)                  \
                                                                           \
   declare_constant(markWord::locked_value)                                \
   declare_constant(markWord::unlocked_value)                              \
@@ -3057,3 +3074,29 @@ void vmStructs_init() {
   VMStructs::init();
 }
 #endif // ASSERT
+
+void VMStructs::compact_headers_overrides() {
+  assert(UseCompactObjectHeaders, "Should have been checked before");
+
+  // We cannot allow SA and other facilities to poke into VM internal fields
+  // expecting the class pointers there. This will crash in the best case,
+  // or yield incorrect execution in the worst case. This code hides the
+  // risky fields from external code by replacing their original container
+  // type to a fake one. The fake type should exist for VMStructs verification
+  // code to work.
+
+  size_t len = localHotSpotVMStructsLength();
+  for (size_t off = 0; off < len; off++) {
+    VMStructEntry* e = &localHotSpotVMStructs[off];
+    if (e == nullptr) continue;
+    if (e->typeName == nullptr) continue;
+    if (e->fieldName == nullptr) continue;
+
+    if (strcmp(e->typeName, "oopDesc") == 0) {
+      if ((strcmp(e->fieldName, "_metadata._klass") == 0) ||
+          (strcmp(e->fieldName, "_metadata._compressed_klass") == 0)) {
+        e->typeName = "fakeOopDesc";
+      }
+    }
+  }
+}

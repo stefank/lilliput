@@ -22,41 +22,89 @@
  */
 
 /*
- * @test id=with-coops-no-ccp
- * @library /test/lib
+ * @test id=with-coops-no-ccp-no-ucoh
+ * @library /test/lib /
  * @requires vm.bits == "64"
  * @modules java.base/jdk.internal.misc
- * @run main/othervm -XX:+UseCompressedOops -XX:-UseCompressedClassPointers ArrayBaseOffsets
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:+UseCompressedOops -XX:-UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:-UseCompactObjectHeaders ArrayBaseOffsets
  */
 /*
- * @test id=with-coops-with-ccp
- * @library /test/lib
+ * @test id=with-coops-with-ccp-no-ucoh
+ * @library /test/lib /
  * @requires vm.bits == "64"
  * @requires vm.opt.UseCompressedClassPointers != false
  * @modules java.base/jdk.internal.misc
- * @run main/othervm -XX:+UseCompressedOops -XX:+UseCompressedClassPointers ArrayBaseOffsets
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:+UseCompressedOops -XX:+UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:-UseCompactObjectHeaders ArrayBaseOffsets
  */
 /*
- * @test id=no-coops-no-ccp
- * @library /test/lib
+ * @test id=no-coops-no-ccp-no-ucoh
+ * @library /test/lib /
  * @requires vm.bits == "64"
  * @modules java.base/jdk.internal.misc
- * @run main/othervm -XX:-UseCompressedOops -XX:-UseCompressedClassPointers ArrayBaseOffsets
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:-UseCompressedOops -XX:-UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:-UseCompactObjectHeaders ArrayBaseOffsets
  */
 /*
- * @test id=no-coops-with-ccp
- * @library /test/lib
+ * @test id=no-coops-with-ccp-no-ucoh
+ * @library /test/lib /
  * @requires vm.bits == "64"
  * @requires vm.opt.UseCompressedClassPointers != false
  * @modules java.base/jdk.internal.misc
- * @run main/othervm -XX:-UseCompressedOops -XX:+UseCompressedClassPointers ArrayBaseOffsets
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:-UseCompressedOops -XX:+UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:-UseCompactObjectHeaders ArrayBaseOffsets
+ */
+/*
+ * @test id=with-coops-no-ccp-with-ucoh
+ * @library /test/lib /
+ * @requires vm.bits == "64"
+ * @modules java.base/jdk.internal.misc
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:+UseCompressedOops -XX:-UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders ArrayBaseOffsets
+ */
+/*
+ * @test id=with-coops-with-ccp-with-ucoh
+ * @library /test/lib /
+ * @requires vm.bits == "64"
+ * @requires vm.opt.UseCompressedClassPointers != false
+ * @modules java.base/jdk.internal.misc
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:+UseCompressedOops -XX:+UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders ArrayBaseOffsets
+ */
+/*
+ * @test id=no-coops-no-ccp-with-ucoh
+ * @library /test/lib /
+ * @requires vm.bits == "64"
+ * @modules java.base/jdk.internal.misc
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:-UseCompressedOops -XX:-UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders ArrayBaseOffsets
+ */
+/*
+ * @test id=no-coops-with-ccp-with-ucoh
+ * @library /test/lib /
+ * @requires vm.bits == "64"
+ * @requires vm.opt.UseCompressedClassPointers != false
+ * @modules java.base/jdk.internal.misc
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI -XX:-UseCompressedOops -XX:+UseCompressedClassPointers -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders ArrayBaseOffsets
  */
 /*
  * @test id=32bit
- * @library /test/lib
+ * @library /test/lib /
  * @requires vm.bits == "32"
  * @modules java.base/jdk.internal.misc
- * @run main/othervm ArrayBaseOffsets
+ * @build jdk.test.whitebox.WhiteBox
+ * @run driver jdk.test.lib.helpers.ClassFileInstaller jdk.test.whitebox.WhiteBox
+ * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI ArrayBaseOffsets
  */
 
 import jdk.internal.misc.Unsafe;
@@ -67,47 +115,43 @@ import java.util.List;
 
 import jdk.test.lib.Asserts;
 import jdk.test.lib.Platform;
+import jdk.test.whitebox.WhiteBox;
 
 public class ArrayBaseOffsets {
 
-    private static final boolean COOP;
-    private static final boolean CCP;
-
+    static final long INT_OFFSET;
+    static final int  INT_ARRAY_OFFSET;
+    static final int  LONG_ARRAY_OFFSET;
     static {
-        if (Platform.is64bit()) {
-            RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
-            List<String> vmargs = runtime.getInputArguments();
-            CCP = !vmargs.contains("-XX:-UseCompressedClassPointers");
-            COOP = System.getProperty("java.vm.compressedOopsMode") != null;
+        WhiteBox WB = WhiteBox.getWhiteBox();
+        if (!Platform.is64bit() || WB.getBooleanVMFlag("UseCompactObjectHeaders")) {
+            INT_OFFSET = 8;
+            INT_ARRAY_OFFSET = 12;
+            LONG_ARRAY_OFFSET = 16;
+        } else if (WB.getBooleanVMFlag("UseCompressedClassPointers")) {
+            INT_OFFSET = 12;
+            INT_ARRAY_OFFSET = 16;
+            LONG_ARRAY_OFFSET = 16;
         } else {
-            COOP = CCP = false;
+            INT_OFFSET = 16;
+            INT_ARRAY_OFFSET = 20;
+            LONG_ARRAY_OFFSET = 24;
         }
     }
 
     static public void main(String[] args) {
         Unsafe unsafe = Unsafe.getUnsafe();
-        int intOffset, longOffset;
-        if (Platform.is64bit()) {
-            if (CCP) {
-                intOffset = 16;
-                longOffset = 16;
-            } else {
-                intOffset = 20;
-                longOffset = 24;
-            }
-        } else {
-            intOffset = 12;
-            longOffset = 16;
-        }
-        Asserts.assertEquals(unsafe.arrayBaseOffset(boolean[].class), intOffset,  "Misplaced boolean array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(byte[].class),    intOffset,  "Misplaced byte    array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(char[].class),    intOffset,  "Misplaced char    array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(short[].class),   intOffset,  "Misplaced short   array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(int[].class),     intOffset,  "Misplaced int     array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(long[].class),    longOffset, "Misplaced long    array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(float[].class),   intOffset,  "Misplaced float   array base");
-        Asserts.assertEquals(unsafe.arrayBaseOffset(double[].class),  longOffset, "Misplaced double  array base");
-        int expectedObjArrayOffset = (COOP || !Platform.is64bit()) ? intOffset : longOffset;
+        Asserts.assertEquals(unsafe.arrayBaseOffset(boolean[].class), INT_ARRAY_OFFSET,  "Misplaced boolean array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(byte[].class),    INT_ARRAY_OFFSET,  "Misplaced byte    array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(char[].class),    INT_ARRAY_OFFSET,  "Misplaced char    array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(short[].class),   INT_ARRAY_OFFSET,  "Misplaced short   array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(int[].class),     INT_ARRAY_OFFSET,  "Misplaced int     array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(long[].class),    LONG_ARRAY_OFFSET, "Misplaced long    array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(float[].class),   INT_ARRAY_OFFSET,  "Misplaced float   array base");
+        Asserts.assertEquals(unsafe.arrayBaseOffset(double[].class),  LONG_ARRAY_OFFSET, "Misplaced double  array base");
+        boolean narrowOops = System.getProperty("java.vm.compressedOopsMode") != null ||
+                             !Platform.is64bit();
+        int expectedObjArrayOffset = narrowOops ? INT_ARRAY_OFFSET : LONG_ARRAY_OFFSET;
         Asserts.assertEquals(unsafe.arrayBaseOffset(Object[].class),  expectedObjArrayOffset, "Misplaced object  array base");
     }
 }

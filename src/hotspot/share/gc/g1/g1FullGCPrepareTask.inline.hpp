@@ -31,6 +31,7 @@
 #include "gc/g1/g1FullCollector.hpp"
 #include "gc/g1/g1FullGCCompactionPoint.hpp"
 #include "gc/g1/g1FullGCScope.hpp"
+#include "gc/shared/slidingForwarding.inline.hpp"
 #include "gc/g1/g1HeapRegion.inline.hpp"
 #include "gc/shared/slidingForwarding.inline.hpp"
 

@@ -114,6 +114,9 @@
 #if INCLUDE_JFR
 #include "jfr/jfr.hpp"
 #endif
+#if INCLUDE_VM_STRUCTS
+#include "runtime/vmStructs.hpp"
+#endif
 
 // Initialization after module runtime initialization
 void universe_post_module_init();  // must happen after call_initPhase2
@@ -499,6 +502,13 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
 
   // Initialize output stream logging
   ostream_init_log();
+
+  // Should happen before any agent attaches and pokes into vmStructs
+#if INCLUDE_VM_STRUCTS
+  if (UseCompactObjectHeaders) {
+    VMStructs::compact_headers_overrides();
+  }
+#endif
 
   // Launch -agentlib/-agentpath and converted -Xrun agents
   JvmtiAgentList::load_agents();

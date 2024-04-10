@@ -167,6 +167,8 @@ class Klass : public Metadata {
 
   JFR_ONLY(DEFINE_TRACE_ID_FIELD;)
 
+  markWord _prototype_header;   // Used to initialize objects' header
+
 private:
   // This is an index into FileMapHeader::_shared_path_table[], to
   // associate this class with the JAR file where it's loaded from during
@@ -674,6 +676,13 @@ protected:
 
   bool is_cloneable() const;
   void set_is_cloneable();
+
+  markWord prototype_header() const      {
+    assert(UseCompactObjectHeaders, "only use with compact object headers");
+    return _prototype_header;
+  }
+  inline void set_prototype_header(markWord header);
+  static ByteSize prototype_header_offset() { return in_ByteSize(offset_of(Klass, _prototype_header)); }
 
   JFR_ONLY(DEFINE_TRACE_ID_METHODS;)
 
