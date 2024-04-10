@@ -127,7 +127,11 @@ class ObjectWaiter : public StackObj {
 #define OM_CACHE_LINE_SIZE DEFAULT_CACHE_LINE_SIZE
 #endif
 
-class ObjectMonitor : public CHeapObj<mtObjectMonitor> {
+// We force alignment of ObjectMonitor objects to 64 bits, so that
+// the ObjectMonitor pointer in object headers don't mess with
+// the self-forwarding bit. This is only a problem on 32-bit JVMs.
+// TODO: Remove this as soon as ObjectMonitors are mapped externally.
+class alignas(8) ObjectMonitor : public CHeapObj<mtObjectMonitor> {
   friend class ObjectSynchronizer;
   friend class ObjectWaiter;
   friend class VMStructs;
